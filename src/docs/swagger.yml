@@ -1,0 +1,280 @@
+openapi: 3.0.0
+info:
+  version: '1.1.0'
+  termsOfService: 'http://swagger.io/terms/'
+  title: Docker
+  license:
+    name: ISC
+  contact:
+    name: Rodrigo
+    email: rodrigodsalas94@gmail.com
+tags:
+  - name: Users
+    description: Endpoints relacionados con el registro y login del usuario
+  - name: Products
+    description: Endpoints relacionados con los productos
+
+paths:
+  /register:
+    post:
+      summary: Registra un nuevo usuario
+      description: Registra un nuevo usuario en el sistema.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Usuario registrado correctamente
+        '500':
+          description: Error interno del servidor
+
+  /login:
+    post:
+      summary: Inicia sesión
+      description: Permite a un usuario iniciar sesión en el sistema.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Sesión iniciada correctamente
+        '401':
+          description: Credenciales inválidas
+
+  /users/update:
+    put:
+      summary: Actualiza un usuario
+      description: Actualiza los datos de un usuario existente.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          description: ID del usuario a actualizar
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: Authorization
+          description: Token de autenticación JWT
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Usuario actualizado correctamente
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error interno del servidor
+
+  /users/desactivate:
+    put:
+      summary: Desactiva un usuario
+      description: Desactiva un usuario existente en el sistema.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          description: ID del usuario a desactivar
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: Authorization
+          description: Token de autenticación JWT
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario desactivado correctamente
+        '500':
+          description: Error interno del servidor
+
+  /users/reactivate:
+    put:
+      summary: Reactiva un usuario
+      description: Reactiva un usuario existente en el sistema.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          description: ID del usuario a reactivar
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: Authorization
+          description: Token de autenticación JWT
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario reactivado correctamente
+        '500':
+          description: Error interno del servidor
+
+  /products/add:
+    post:
+      summary: Agrega un nuevo producto
+      description: Agrega un nuevo producto al sistema.
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Producto creado correctamente
+        '500':
+          description: Error interno del servidor
+
+  /products/getall:
+    get:
+      summary: Obtiene todos los productos
+      description: Obtiene una lista de todos los productos en el sistema.
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Lista de productos obtenida correctamente
+        '500':
+          description: Error interno del servidor
+
+  /products/{id}:
+    get:
+      summary: Obtiene un producto por ID
+      description: Obtiene los detalles de un producto específico por su ID.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          description: ID del producto a obtener
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Producto obtenido correctamente
+        '404':
+          description: Producto no encontrado
+        '500':
+          description: Error interno del servidor
+
+  /products/update/{id}:
+    put:
+      summary: Actualiza un producto
+      description: Actualiza los detalles de un producto existente por su ID.
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: ID del producto a actualizar
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: Authorization
+          description: Token de autenticación JWT
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Producto actualizado correctamente
+        '404':
+          description: Producto no encontrado
+        '500':
+          description: Error interno del servidor
+
+  /products/delete/{id}:
+    put:
+      summary: Elimina un producto
+      description: Elimina un producto existente por su ID.
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: ID del producto a eliminar
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: Authorization
+          description: Token de autenticación JWT
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Producto eliminado correctamente
+        '404':
+          description: Producto no encontrado
+        '500':
+          description: Error interno del servidor
